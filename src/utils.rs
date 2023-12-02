@@ -3,14 +3,8 @@ use std::io::{BufRead, BufReader};
 
 pub fn read_day_as_lines(day: u32, is_test: bool) -> Vec<String> {
     let filename = match is_test {
-        true => format!(
-            "/Users/shardul/src/github.com/shardulbee/advent2023/data/day{:1}_test.data",
-            day
-        ),
-        false => format!(
-            "/Users/shardul/src/github.com/shardulbee/advent2023/data/day{:1}.data",
-            day
-        ),
+        true => format!("./data/day{:1}_test.data", day),
+        false => format!("./data/day{:1}.data", day),
     };
     //print the filename
     // println!("Reading file: {}", filename);
