@@ -135,22 +135,25 @@ impl Game {
     }
 
     fn power(&self) -> i32 {
-        // iterate over all draws and return the min value for all colors
-        let mut min_blue = std::i32::MIN;
-        let mut min_red = std::i32::MIN;
-        let mut min_green = std::i32::MIN;
-        self.draws.iter().for_each(|draw| {
-            if draw.num_blue > min_blue {
-                min_blue = draw.num_blue;
-            }
-            if draw.num_red > min_red {
-                min_red = draw.num_red;
-            }
-            if draw.num_green > min_green {
-                min_green = draw.num_green;
-            }
-        });
-        min_blue * min_green * min_red
+        let max_blue = self
+            .draws
+            .iter()
+            .map(|draw| draw.num_blue)
+            .max()
+            .unwrap_or(0);
+        let max_red = self
+            .draws
+            .iter()
+            .map(|draw| draw.num_red)
+            .max()
+            .unwrap_or(0);
+        let max_green = self
+            .draws
+            .iter()
+            .map(|draw| draw.num_green)
+            .max()
+            .unwrap_or(0);
+        max_blue * max_red * max_green
     }
 }
 
