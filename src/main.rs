@@ -25,7 +25,7 @@ fn main() {
 
     match day_input {
         "1" => solutions::DayOne::run(test_mode),
-        "2" => solutions::DayTwo::run(test_mode, None),
+        "2" => solutions::DayTwo::run(test_mode),
         _ => println!("Not implemented yet"),
     }
 }
