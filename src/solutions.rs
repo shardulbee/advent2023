@@ -1,8 +1,6 @@
+use crate::utils;
 use regex::Regex;
 use std::collections::HashMap;
-
-#[path = "utils.rs"]
-mod utils;
 
 pub struct DayOne;
 impl DayOne {
@@ -102,7 +100,7 @@ impl Draw {
     }
 }
 
-struct Game {
+pub struct Game {
     id: i32,
     draws: Vec<Draw>,
 }
@@ -112,7 +110,7 @@ const MAX_NUM_GREEN: i32 = 13;
 const MAX_NUM_BLUE: i32 = 14;
 
 impl Game {
-    fn parse_game(game: &str) -> Game {
+    pub fn parse_game(game: &str) -> Game {
         let first = game.split(':').collect::<Vec<&str>>();
         let id = first[0].split(' ').collect::<Vec<&str>>()[1]
             .parse::<i32>()
@@ -134,7 +132,7 @@ impl Game {
         })
     }
 
-    fn power(&self) -> i32 {
+    pub fn power(&self) -> i32 {
         let max_blue = self
             .draws
             .iter()
@@ -155,6 +153,24 @@ impl Game {
             .unwrap_or(0);
         max_blue * max_red * max_green
     }
+
+    pub fn power2(&self) -> i32 {
+        let mut max_blue = 0;
+        let mut max_red = 0;
+        let mut max_green = 0;
+        for draw in &self.draws {
+            if draw.num_blue > max_blue {
+                max_blue = draw.num_blue;
+            }
+            if draw.num_red > max_red {
+                max_red = draw.num_red;
+            }
+            if draw.num_green > max_green {
+                max_green = draw.num_green;
+            }
+        }
+        max_blue * max_red * max_green
+    }
 }
 
 struct Games(Vec<Game>);
@@ -172,7 +188,7 @@ impl Games {
 
 pub struct DayTwo;
 impl DayTwo {
-    pub fn run(test_mode: bool) {
+    pub fn run(test_mode: bool, power_two: Option<bool>) {
         let lines = utils::read_day_as_lines(2, test_mode);
         let games = Games(
             lines
@@ -181,8 +197,11 @@ impl DayTwo {
                 .collect::<Vec<Game>>(),
         );
 
-        println!("Part one: {}", Self::part_one(&games));
-        println!("Part two: {}", Self::part_two(&games));
+        // println!("Part one: {}", Self::part_one(&games));
+        match power_two {
+            Some(true) => Self::part_two(&games),
+            _ => Self::part_two_two(&games),
+        };
     }
 
     fn part_one(games: &Games) -> i32 {
@@ -191,5 +210,9 @@ impl DayTwo {
 
     fn part_two(games: &Games) -> i32 {
         games.0.iter().map(|game| game.power()).sum()
+    }
+
+    fn part_two_two(games: &Games) -> i32 {
+        games.0.iter().map(|game| game.power2()).sum()
     }
 }

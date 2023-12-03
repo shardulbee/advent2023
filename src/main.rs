@@ -1,6 +1,5 @@
+use advent2023::solutions;
 use std::io::{self, Write};
-
-mod solutions;
 
 fn main() {
     let mut day_input = String::new();
@@ -26,7 +25,7 @@ fn main() {
 
     match day_input {
         "1" => solutions::DayOne::run(test_mode),
-        "2" => solutions::DayTwo::run(test_mode),
+        "2" => solutions::DayTwo::run(test_mode, None),
         _ => println!("Not implemented yet"),
     }
 }
