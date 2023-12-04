@@ -1,4 +1,4 @@
-use advent2023::solutions;
+use advent2023::solutions::*;
 use std::io::{self, Write};
 
 fn main() {
@@ -24,10 +24,10 @@ fn main() {
     };
 
     match day_input {
-        "1" => solutions::DayOne::run(test_mode),
-        "2" => solutions::DayTwo::run(test_mode),
-        "3" => solutions::DayThree::run(test_mode),
-        "4" => solutions::DayFour::run(test_mode),
+        "1" => day_one::run(test_mode),
+        "2" => day_two::run(test_mode),
+        "3" => day_three::run(test_mode),
+        "4" => day_four::run(test_mode),
         _ => println!("Not implemented yet"),
     }
 }
