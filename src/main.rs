@@ -27,6 +27,7 @@ fn main() {
         "1" => solutions::DayOne::run(test_mode),
         "2" => solutions::DayTwo::run(test_mode),
         "3" => solutions::DayThree::run(test_mode),
+        "4" => solutions::DayFour::run(test_mode),
         _ => println!("Not implemented yet"),
     }
 }
