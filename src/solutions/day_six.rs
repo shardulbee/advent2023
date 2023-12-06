@@ -7,17 +7,10 @@ struct Race {
     distance: usize,
 }
 impl Race {
-    fn get_winners(&self) -> Vec<usize> {
-        let mut winners = Vec::new();
-
-        for i in 1..=self.time {
-            let distance_for_i = i * (self.time - i);
-            if distance_for_i > self.distance {
-                winners.push(i);
-            }
-        }
-
-        winners
+    fn num_winners(&self) -> usize {
+        (1..=self.time)
+            .filter(|i| i * (self.time - i) > self.distance)
+            .count()
     }
 }
 
@@ -26,35 +19,27 @@ pub fn run(test_mode: bool) {
     let times_str = lines.get(0).unwrap();
     let distances_str = lines.get(1).unwrap();
 
-    let re = Regex::new(r"\d+").unwrap();
-
-    let mut times: Vec<usize> = Vec::new();
-    let mut distances: Vec<usize> = Vec::new();
-
-    re.find_iter(times_str)
-        .for_each(|t| times.push(t.as_str().parse::<usize>().unwrap()));
-    re.find_iter(distances_str)
-        .for_each(|t| distances.push(t.as_str().parse::<usize>().unwrap()));
-
-    let zipped = times
-        .iter()
-        .zip(distances.iter())
-        .map(|(t, d)| Race {
-            time: *t,
-            distance: *d,
-        })
-        .collect::<Vec<Race>>();
-
-    // println!("Zipped: {:?}", zipped);
-
-    // let parsed_times = captured_times.iter().map(|c| c.parse::<usize>())
-
-    println!("Part one: {}", part_one(&zipped));
+    println!("Part one: {}", part_one(times_str, distances_str));
     println!("Part two: {}", part_two(times_str, distances_str));
 }
 
-fn part_one(races: &[Race]) -> usize {
-    races.iter().map(|r| r.get_winners().len()).product()
+fn part_one(times_str: &str, distances_str: &str) -> usize {
+    let re = Regex::new(r"\d+").unwrap();
+    let times = re
+        .find_iter(times_str)
+        .map(|t| t.as_str().parse::<usize>().unwrap());
+    let distances = re
+        .find_iter(distances_str)
+        .map(|t| t.as_str().parse::<usize>().unwrap());
+    let races = times
+        .zip(distances)
+        .map(|(t, d)| Race {
+            time: t,
+            distance: d,
+        })
+        .collect::<Vec<Race>>();
+
+    races.iter().map(|r| r.num_winners()).product()
 }
 
 fn part_two(times_str: &str, distances_str: &str) -> usize {
@@ -74,5 +59,5 @@ fn part_two(times_str: &str, distances_str: &str) -> usize {
         .parse::<usize>()
         .unwrap();
 
-    Race { time, distance }.get_winners().len()
+    Race { time, distance }.num_winners()
 }
