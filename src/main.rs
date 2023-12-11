@@ -31,6 +31,8 @@ fn main() {
         "5" => day_five::run(test_mode),
         "6" => day_six::run(test_mode),
         "7" => day_seven::run(test_mode),
+        "8" => day_eight::run(test_mode),
+        "9" => day_nine::run(test_mode),
         _ => println!("Not implemented yet"),
     }
 }
