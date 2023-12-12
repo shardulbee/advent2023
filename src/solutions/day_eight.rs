@@ -10,7 +10,7 @@ enum Direction {
     Right,
 }
 
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 struct Node {
     source: String,
     left: String,
@@ -41,8 +41,8 @@ pub fn run(test: bool) {
         })
         .collect::<Vec<Direction>>();
     let nodes = &input[1].split('\n').map(Node::parse).collect::<Vec<Node>>();
-    println!("Part 1: {}", part_one(left_right_instructions, nodes));
-    // println!("Part 2: {}", part_two(left_right_instructions, nodes));
+    // println!("Part 1: {}", part_one(left_right_instructions, nodes));
+    println!("Part 2: {}", part_two(left_right_instructions, nodes));
 }
 
 fn part_one(left_right_instructions: &[Direction], nodes: &[Node]) -> usize {
@@ -80,28 +80,49 @@ fn calculate_hash<T: Hash>(t: &T) -> usize {
     s.finish().try_into().unwrap()
 }
 
-// fn part_two(left_right_instructions: &[Direction], nodes: &[Node]) -> usize {
-//     let mut node_cache: HashMap<(&String, &Direction), &String> = HashMap::new();
-//     for node in nodes {
-//         node_cache.insert((&node.source, &Direction::Left), &node.left);
-//         node_cache.insert((&node.source, &Direction::Right), &node.right);
-//     }
-//
-//     let starts = nodes.iter().filter(|n| n.source.ends_with('A')).map(|s| {
-//         let mut source = s.source.clone();
-//         let mut directions = left_right_instructions.iter().cycle();
-//         let mut num_steps = 0;
-//
-//         while source != "ZZZ" {
-//             num_steps += 1;
-//
-//             let new_source = match directions.next() {
-//                 Some(d) => *node_cache.get(&(&source.to_string(), d)).unwrap(),
-//                 _ => panic!("Not possible because we're cycling endlessly"),
-//             };
-//             source = new_source.to_string();
-//         }
-//         num_steps
-//     });
-//     starts.min().unwrap()
-// }
+fn part_two(left_right_instructions: &[Direction], nodes: &[Node]) -> usize {
+    // instead of computing the number of steps until a ZZZ from AAA, we're actually just trying to
+    // compute number it takes for all nodes ending in "A" to end in "z" at the same time
+    let sources = nodes.iter().filter(|n| n.source.ends_with("A"));
+    let mut directions = left_right_instructions.iter().cycle();
+
+    let mut node_cache: HashMap<(&String, &Direction), &String> = HashMap::new();
+    for node in nodes {
+        node_cache.insert(
+            (&node.source, &Direction::Left),
+            &node.left,
+        );
+        node_cache.insert(
+            (&node.source, &Direction::Right),
+            &node.right,
+        );
+    }
+
+    let finals = sources.map(|n| {
+        let mut source = &n.source;
+        let mut num_steps = 0;
+        while !source.ends_with("Z") {
+            num_steps += 1;
+            let new_source = *node_cache
+                .get(&(&source, directions.next().unwrap()))
+                .unwrap();
+            source = &new_source;
+        }
+        println!("Start: {}, Final: {}, Num steps: {}", n.source, source, num_steps);
+        num_steps
+    }).collect::<Vec<usize>>();
+
+    finals.iter().fold(finals[0], |acc, f| lcm(acc, *f) )
+}
+
+fn lcm(a: usize, b: usize) -> usize {
+    a * b / gcd(a, b)
+}
+
+fn gcd(a: usize, b: usize) -> usize {
+    if b == 0 {
+        a
+    } else {
+        gcd(b, a % b)
+    }
+}
