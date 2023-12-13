@@ -3,11 +3,11 @@ use regex::Regex;
 use crate::utils;
 
 fn compute_difference_sequence(input_sequence: &[i32]) -> Vec<i32> {
-	let differences = input_sequence.iter().enumerate().map(|(i, x)| {
+	let differences = input_sequence.iter().enumerate().filter_map(|(i, x)| {
 		if i == 0 { return None };
 
 		Some(x - input_sequence[i - 1])
-	}).filter(Option::is_some).map(Option::unwrap).collect::<Vec<i32>>();
+	}).collect::<Vec<i32>>();
 	differences
 }
 
@@ -19,8 +19,8 @@ fn until_zeroes(input_sequence: &Vec<i32>) -> Vec<Vec<i32>> {
 	let mut sequences = Vec::new();
 	let mut cur_sequence = input_sequence;
 	sequences.push(cur_sequence.to_vec());
-	while !all_zeroes(&cur_sequence) {
-		let differences = compute_difference_sequence(&cur_sequence);
+	while !all_zeroes(cur_sequence) {
+		let differences = compute_difference_sequence(cur_sequence);
 		sequences.push(differences.to_vec());
 		cur_sequence = &sequences[sequences.len() - 1];
 	}
